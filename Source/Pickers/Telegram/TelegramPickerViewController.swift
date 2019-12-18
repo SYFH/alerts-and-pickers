@@ -11,21 +11,6 @@ public enum TelegramSelectionType {
     case contact(Contact?)
 }
 
-extension UIAlertController {
-    
-    /// Add Telegram Picker
-    ///
-    /// - Parameters:
-    ///   - selection: type and action for selection of asset/assets
-    
-    func addTelegramPicker(selection: @escaping TelegramSelection) {
-        let vc = TelegramPickerViewController(selection: selection)
-        set(vc: vc)
-    }
-}
-
-
-
 final class TelegramPickerViewController: UIViewController {
     
     

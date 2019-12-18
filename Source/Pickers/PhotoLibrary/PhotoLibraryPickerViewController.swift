@@ -2,69 +2,15 @@ import Foundation
 import UIKit
 import Photos
 
-extension UIAlertController {
-    
-    /// Add PhotoLibrary Picker
-    ///
-    /// - Parameters:
-    ///   - flow: scroll direction
-    ///   - pagging: pagging
-    ///   - images: for content to select
-    ///   - selection: type and action for selection of image/images
-    
-    func addPhotoLibraryPicker(flow: UICollectionView.ScrollDirection, paging: Bool, selection: PhotoLibraryPickerViewController.Selection) {
-        let selection: PhotoLibraryPickerViewController.Selection = selection
-        var asset: PHAsset?
-        var assets: [PHAsset] = []
-        
-        let buttonAdd = UIAlertAction(title: "Add", style: .default) { action in
-            switch selection {
-                
-            case .single(let action):
-                action?(asset)
-                
-            case .multiple(let action):
-                action?(assets)
-            }
-        }
-        buttonAdd.isEnabled = false
-        
-        let vc = PhotoLibraryPickerViewController(flow: flow, paging: paging, selection: {
-            switch selection {
-            case .single(_):
-                return .single(action: { new in
-                    buttonAdd.isEnabled = new != nil
-                    asset = new
-                })
-            case .multiple(_):
-                return .multiple(action: { new in
-                    buttonAdd.isEnabled = new.count > 0
-                    assets = new
-                })
-            }
-        }())
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            vc.preferredContentSize.height = vc.preferredSize.height * 0.9
-            vc.preferredContentSize.width = vc.preferredSize.width * 0.9
-        } else {
-            vc.preferredContentSize.height = vc.preferredSize.height
-        }
-        
-        addAction(buttonAdd)
-        set(vc: vc)
-    }
+public typealias PhotoLibrarySingleSelection = (PHAsset?) -> Swift.Void
+public typealias PhotoLibraryMultipleSelection = ([PHAsset]) -> Swift.Void
+
+public enum PhotoLibrarySelection {
+    case single(action: PhotoLibrarySingleSelection?)
+    case multiple(action: PhotoLibraryMultipleSelection?)
 }
 
 final class PhotoLibraryPickerViewController: UIViewController {
-    
-    public typealias SingleSelection = (PHAsset?) -> Swift.Void
-    public typealias MultipleSelection = ([PHAsset]) -> Swift.Void
-    
-    public enum Selection {
-        case single(action: SingleSelection?)
-        case multiple(action: MultipleSelection?)
-    }
     
     // MARK: UI Metrics
     
@@ -112,13 +58,13 @@ final class PhotoLibraryPickerViewController: UIViewController {
         return $0
     }(UICollectionViewFlowLayout())
 
-    fileprivate var selection: Selection?
+    fileprivate var selection: PhotoLibrarySelection?
     fileprivate var assets: [PHAsset] = []
     fileprivate var selectedAssets: [PHAsset] = []
     
     // MARK: Initialize
     
-    required public init(flow: UICollectionView.ScrollDirection, paging: Bool, selection: Selection) {
+    required public init(flow: UICollectionView.ScrollDirection, paging: Bool, selection: PhotoLibrarySelection) {
         super.init(nibName: nil, bundle: nil)
         
         self.selection = selection

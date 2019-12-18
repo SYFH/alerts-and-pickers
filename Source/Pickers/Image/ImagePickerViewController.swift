@@ -1,38 +1,14 @@
 import UIKit
 
-extension UIAlertController {
-    
-    /// Add Image Picker
-    ///
-    /// - Parameters:
-    ///   - flow: scroll direction
-    ///   - pagging: pagging
-    ///   - images: for content to select
-    ///   - selection: type and action for selection of image/images
-    
-    func addImagePicker(flow: UICollectionView.ScrollDirection, paging: Bool, images: [UIImage], selection: ImagePickerViewController.SelectionType? = nil) {
-        let vc = ImagePickerViewController(flow: flow, paging: paging, images: images, selection: selection)
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            vc.preferredContentSize.height = vc.preferredSize.height * 0.9
-            vc.preferredContentSize.width = vc.preferredSize.width * 0.9
-        } else {
-            vc.preferredContentSize.height = vc.preferredSize.height
-        }
+public typealias ImagePickerSingleSelection = (UIImage?) -> Swift.Void
+public typealias ImagePickerMultipleSelection = ([UIImage]) -> Swift.Void
 
-        set(vc: vc)
-    }
+public enum SelectionType {
+    case single(action: ImagePickerSingleSelection?)
+    case multiple(action: ImagePickerMultipleSelection?)
 }
 
 final class ImagePickerViewController: UIViewController {
-    
-    public typealias SingleSelection = (UIImage?) -> Swift.Void
-    public typealias MultipleSelection = ([UIImage]) -> Swift.Void
-    
-    public enum SelectionType {
-        case single(action: SingleSelection?)
-        case multiple(action: MultipleSelection?)
-    }
 
     // MARK: UI Metrics
     

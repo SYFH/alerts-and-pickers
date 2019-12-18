@@ -1,21 +1,5 @@
 import UIKit
 
-extension UIAlertController {
-    
-    /// Add a textField
-    ///
-    /// - Parameters:
-    ///   - height: textField height
-    ///   - hInset: right and left margins to AlertController border
-    ///   - vInset: bottom margin to button
-    ///   - configuration: textField
-    
-    func addOneTextField(configuration: TextField.Config?) {
-        let textField = OneTextFieldViewController(vInset: preferredStyle == .alert ? 12 : 0, configuration: configuration)
-        let height: CGFloat = OneTextFieldViewController.ui.height + OneTextFieldViewController.ui.vInset
-        set(vc: textField, height: height)
-    }
-}
 
 final class OneTextFieldViewController: UIViewController {
     

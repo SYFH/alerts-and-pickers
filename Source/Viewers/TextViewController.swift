@@ -1,25 +1,12 @@
 import UIKit
 
-extension UIAlertController {
+public enum Kind {
     
-    /// Add a Text Viewer
-    ///
-    /// - Parameters:
-    ///   - text: text kind
-    
-    func addTextViewer(text: TextViewerViewController.Kind) {
-        let textViewer = TextViewerViewController(text: text)
-        set(vc: textViewer)
-    }
+    case text(String?)
+    case attributedText([AttributedTextBlock])
 }
 
 final class TextViewerViewController: UIViewController {
-    
-    enum Kind {
-        
-        case text(String?)
-        case attributedText([AttributedTextBlock])
-    }
     
     fileprivate var text: [AttributedTextBlock] = []
     

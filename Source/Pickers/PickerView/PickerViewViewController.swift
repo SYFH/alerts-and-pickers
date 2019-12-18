@@ -1,34 +1,20 @@
 import UIKit
 
-extension UIAlertController {
-    
-    /// Add a picker view
-    ///
-    /// - Parameters:
-    ///   - values: values for picker view
-    ///   - initialSelection: initial selection of picker view
-    ///   - action: action for selected value of picker view
-    func addPickerView(values: PickerViewViewController.Values,  initialSelection: PickerViewViewController.Index? = nil, action: PickerViewViewController.Action?) {
-        let pickerView = PickerViewViewController(values: values, initialSelection: initialSelection, action: action)
-        set(vc: pickerView, height: 216)
-    }
-}
+public typealias PickerViewValues = [[String]]
+public typealias PickerViewIndex = (column: Int, row: Int)
+public typealias PickerViewAction = (_ vc: UIViewController, _ picker: UIPickerView, _ index: PickerViewIndex, _ values: PickerViewValues) -> ()
 
 final class PickerViewViewController: UIViewController {
     
-    public typealias Values = [[String]]
-    public typealias Index = (column: Int, row: Int)
-    public typealias Action = (_ vc: UIViewController, _ picker: UIPickerView, _ index: Index, _ values: Values) -> ()
-    
-    fileprivate var action: Action?
-    fileprivate var values: Values = [[]]
-    fileprivate var initialSelection: Index?
+    fileprivate var action: PickerViewAction?
+    fileprivate var values: PickerViewValues = [[]]
+    fileprivate var initialSelection: PickerViewIndex?
     
     fileprivate lazy var pickerView: UIPickerView = {
         return $0
     }(UIPickerView())
     
-    init(values: Values, initialSelection: Index? = nil, action: Action?) {
+    init(values: PickerViewValues, initialSelection: PickerViewIndex? = nil, action: PickerViewAction?) {
         super.init(nibName: nil, bundle: nil)
         self.values = values
         self.initialSelection = initialSelection
@@ -101,7 +87,7 @@ extension PickerViewViewController: UIPickerViewDataSource, UIPickerViewDelegate
      }
      */
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        action?(self, pickerView, Index(column: component, row: row), values)
+        action?(self, pickerView, PickerViewIndex(column: component, row: row), values)
     }
 }
 

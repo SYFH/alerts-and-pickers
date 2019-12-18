@@ -4,20 +4,7 @@ import CoreLocation
 
 /// Based on https://github.com/almassapargali/LocationPicker
 
-extension UIAlertController {
-    
-    /// Add PhotoLibrary Picker
-    ///
-    /// - Parameters:
-    ///   - selection: type and action for selection of asset/assets
-    
-    func addLocationPicker(location: Location? = nil, completion: @escaping LocationPickerViewController.CompletionHandler) {
-        let vc = LocationPickerViewController()
-        vc.location = location
-        vc.completion = completion
-        set(vc: vc)
-    }
-}
+public typealias LocationPickerCompletionHandler = (Location?) -> ()
 
 final class LocationPickerViewController: UIViewController {
 	
@@ -25,10 +12,8 @@ final class LocationPickerViewController: UIViewController {
 		let once: Bool
 		let action: (CLLocation) -> ()
 	}
-    
-    public typealias CompletionHandler = (Location?) -> ()
 	
-	public var completion: CompletionHandler?
+	public var completion: LocationPickerCompletionHandler?
 	
 	// region distance to be used for creation region when user selects place from search results
 	public var resultRegionDistance: CLLocationDistance = 600

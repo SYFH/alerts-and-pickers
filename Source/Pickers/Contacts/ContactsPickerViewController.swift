@@ -1,32 +1,7 @@
 import UIKit
 import ContactsUI
 
-extension UIAlertController {
-    
-    /// Add Contacts Picker
-    ///
-    /// - Parameters:
-    ///   - selection: action for selection of contact
-    
-    func addContactsPicker(selection: @escaping ContactsPickerViewController.Selection) {
-        let selection: ContactsPickerViewController.Selection = selection
-        var contact: Contact?
-        
-        let addContact = UIAlertAction(title: "Add Contact", style: .default) { action in
-            selection(contact)
-        }
-        addContact.isEnabled = false
-        
-        let vc = ContactsPickerViewController { new in
-            addContact.isEnabled = new != nil
-            contact = new
-        }
-        
-        set(vc: vc)
-        addAction(addContact)
-    }
-}
-
+public typealias ContactsSelection = (Contact?) -> ()
 final class ContactsPickerViewController: UIViewController {
     
     // MARK: UI Metrics
@@ -37,10 +12,7 @@ final class ContactsPickerViewController: UIViewController {
     }
     
     // MARK: Properties
-    
-    public typealias Selection = (Contact?) -> ()
-    
-    fileprivate var selection: Selection?
+    fileprivate var ContactsSelection: ContactsSelection?
     
     //Contacts ordered in dicitonary alphabetically
     fileprivate var orderedContacts = [String: [CNContact]]()
@@ -66,7 +38,7 @@ final class ContactsPickerViewController: UIViewController {
     fileprivate lazy var tableView: UITableView = { [unowned self] in
         $0.dataSource = self
         $0.delegate = self
-        //$0.allowsMultipleSelection = true
+        //$0.allowsMultipleContactsSelection = true
         $0.rowHeight = UI.rowHeight
         $0.separatorColor = UI.separatorColor
         $0.bounces = true
@@ -81,8 +53,8 @@ final class ContactsPickerViewController: UIViewController {
     
     // MARK: Initialize
     
-    required init(selection: Selection?) {
-        self.selection = selection
+    required init(ContactsSelection: ContactsSelection?) {
+        self.ContactsSelection = ContactsSelection
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -274,7 +246,7 @@ extension ContactsPickerViewController: UITableViewDelegate {
         guard let contact = contact(at: indexPath) else { return }
         selectedContact = contact
         Log(selectedContact?.displayName)
-        selection?(selectedContact)
+        ContactsSelection?(selectedContact)
     }
 }
 

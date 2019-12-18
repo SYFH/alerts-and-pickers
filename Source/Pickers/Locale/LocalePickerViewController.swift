@@ -1,28 +1,11 @@
 import UIKit
 
-extension UIAlertController {
+public typealias LocalePickerSelection = (LocaleInfo?) -> Swift.Void
 
-    /// Add Locale Picker
-    ///
-    /// - Parameters:
-    ///   - type: country, phoneCode or currency
-    ///   - action: for selected locale
-    
-    func addLocalePicker(type: LocalePickerViewController.Kind, selection: @escaping LocalePickerViewController.Selection) {
-        var info: LocaleInfo?
-        let selection: LocalePickerViewController.Selection = selection
-        let buttonSelect: UIAlertAction = UIAlertAction(title: "Select", style: .default) { action in
-            selection(info)
-        }
-        buttonSelect.isEnabled = false
-        
-        let vc = LocalePickerViewController(type: type) { new in
-            info = new
-            buttonSelect.isEnabled = new != nil
-        }
-        set(vc: vc)
-        addAction(buttonSelect)
-    }
+public enum LocalePickerKind {
+    case country
+    case phoneCode
+    case currency
 }
 
 final class LocalePickerViewController: UIViewController {
@@ -36,16 +19,8 @@ final class LocalePickerViewController: UIViewController {
     
     // MARK: Properties
     
-    public typealias Selection = (LocaleInfo?) -> Swift.Void
-    
-    public enum Kind {
-        case country
-        case phoneCode
-        case currency
-    }
-    
-    fileprivate var type: Kind
-    fileprivate var selection: Selection?
+    fileprivate var type: LocalePickerKind
+    fileprivate var selection: LocalePickerSelection?
     
     fileprivate var orderedInfo = [String: [LocaleInfo]]()
     fileprivate var sortedInfoKeys = [String]()
@@ -88,7 +63,7 @@ final class LocalePickerViewController: UIViewController {
     
     // MARK: Initialize
     
-    required init(type: Kind, selection: @escaping Selection) {
+    required init(type: LocalePickerKind, selection: @escaping LocalePickerSelection) {
         self.type = type
         self.selection = selection
         super.init(nibName: nil, bundle: nil)
@@ -297,7 +272,7 @@ extension LocalePickerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         if searchController.isActive { return 0 }
         tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: .top , animated: false)
-        return sortedInfoKeys.index(of: title)!
+        return sortedInfoKeys.firstIndex(of: title)!
     }
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {

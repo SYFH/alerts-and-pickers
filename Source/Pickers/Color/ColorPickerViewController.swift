@@ -1,40 +1,9 @@
 import UIKit
 
-extension UIAlertController {
-    
-    /// Add a Color Picker
-    ///
-    /// - Parameters:
-    ///   - color: input color
-    ///   - action: for selected color
-    
-    func addColorPicker(color: UIColor = .black, selection: ColorPickerViewController.Selection?) {
-        let selection: ColorPickerViewController.Selection? = selection
-        var color: UIColor = color
-        
-        let buttonSelection = UIAlertAction(title: "Select", style: .default) { action in
-            selection?(color)
-        }
-        buttonSelection.isEnabled = true
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = storyboard.instantiateViewController(withIdentifier: "ColorPicker") as? ColorPickerViewController else { return }
-        set(vc: vc)
-        
-        set(title: color.hexString, font: .systemFont(ofSize: 17), color: color)
-        vc.set(color: color) { new in
-            color = new
-            self.set(title: color.hexString, font: .systemFont(ofSize: 17), color: color)
-        }
-        addAction(buttonSelection)
-    }
-}
-
+public typealias ColorSelection = (UIColor) -> Swift.Void
 class ColorPickerViewController: UIViewController {
     
-    public typealias Selection = (UIColor) -> Swift.Void
-    
-    fileprivate var selection: Selection?
+    fileprivate var selection: ColorSelection?
     
     @IBOutlet weak var colorView: UIView!
     
@@ -55,7 +24,7 @@ class ColorPickerViewController: UIViewController {
     
     fileprivate var preferredHeight: CGFloat = 0
     
-    func set(color: UIColor, selection: Selection?) {
+    func set(color: UIColor, selection: ColorSelection?) {
         let components = color.hsbaComponents
         
         hue = components.hue
